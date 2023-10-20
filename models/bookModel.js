@@ -9,6 +9,10 @@ const bookSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    BookColor:{
+        type : String,
+        default : "danger"
+    },
     Bookpages: String,
     Bookdescription: String,
     Bookauthor: String,

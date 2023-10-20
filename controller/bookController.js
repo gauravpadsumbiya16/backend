@@ -59,7 +59,6 @@ exports.addBook = async (req, res) => {
             status: "OK",
             data
         })
-        console.log("Addbook = ", bookdata);
     } catch (error) {
         console.log("error = ", error)
     }
@@ -74,8 +73,6 @@ exports.updateBook = async (req, res) => {
                 $set: req.body
             }
         )
-        console.log(req.body);
-        console.log(result);
         res.status(200).send(result);
     }
     catch (error) {
@@ -142,6 +139,93 @@ exports.invalidRouteHandle = (req, res) => {
     try {
         console.log("this is called of books");
         res.end(`404 page not found`);
+    } catch (error) {
+        console.log("error ", error)
+    }
+}
+
+//updateBookMark
+exports.updateBookMark = async (req,res) => {
+
+    const newBookData = req.body ;
+    
+    const newMark = ( newBookData.BookColor === "danger") ? "success" : "danger";
+    
+    newBookData.BookColor = newMark ;
+    
+    const book = await Book.findByIdAndUpdate(req.params._id, newBookData,{
+        new:true,
+        runValidators:true,
+        userFindAndModify:false,
+    });
+
+    console.log(book);
+    
+    res.status(200).json({
+        success:true,
+    });
+}; 
+
+
+//findBookbyMark
+exports.findBookbyMark = async (req, res) => {
+    try {
+        let result = await Book.find({ "$and": [{ UserId: req.params.id },{BookColor:"success"}] })
+        if (result) {
+            res.send(result);
+        }
+        else {
+            res.send({ result: "No record found !! " })
+        }
+    } catch (error) {
+        console.log("error of correct ", error)
+    }
+
+}
+
+//findBookbyUnMark
+exports.findBookbyUnMark = async (req, res) => {
+    try {
+        let result = await Book.find({ "$and": [{ UserId: req.params.id },{BookColor:"danger"}] })
+        if (result) {
+            res.send(result);
+        }
+        else {
+            res.send({ result: "No record found !! " })
+        }
+    } catch (error) {
+        console.log("error ", error)
+    }
+}
+
+//findBookbyMarkAdmin
+exports.marksbooks = async (req, res) => {
+    try {
+        
+        let result = await Book.find({BookColor:"success"})
+        if (result) {
+            res.send(result);
+            console.log(result);
+        }
+        else {
+            res.send({ result: "No record found !! " })
+        }
+    } catch (error) {
+        console.log("error of correct ", error)
+    }
+}
+
+//findBookbyUnMarkAdmin
+exports.unmarkbooks = async (req, res) => {
+    try {
+        let result = await Book.find({BookColor:"danger"})
+        if (result) {
+            res.send(result);
+            console.log(result);
+        }
+        else {
+            res.send({ result: "No record found !! " })
+        }
     } catch (error) {
         console.log("error ", error)
     }
